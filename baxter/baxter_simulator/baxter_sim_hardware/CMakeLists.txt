@@ -16,8 +16,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 find_package(cmake_modules REQUIRED)
 find_package(OpenCV REQUIRED)
 
-find_package(Eigen3 REQUIRED)
-
+find_package(Eigen REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS
@@ -26,16 +25,14 @@ catkin_package(
     cv_bridge
     image_transport
     baxter_sim_kinematics
-  DEPENDS
-    OpenCV
-    EIGEN3
+  DEPENDS OpenCV
   LIBRARIES ${PROJECT_NAME}
 )
 
 include_directories(include
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
+  ${EIGEN_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
 

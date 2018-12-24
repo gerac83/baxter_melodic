@@ -10,15 +10,17 @@ find_package(catkin
   baxter_core_msgs
 )
 find_package(Boost REQUIRED COMPONENTS system)
-
-# Support new yaml-cpp API.
-find_package(PkgConfig)
-pkg_check_modules(NEW_YAMLCPP yaml-cpp>=0.5)
-if(NEW_YAMLCPP_FOUND)
-  add_definitions(-DHAVE_NEW_YAMLCPP)
-endif(NEW_YAMLCPP_FOUND)
-
-find_library(YAML yaml-cpp REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(YAML_CPP REQUIRED yaml-cpp)
+find_path(YAML_CPP_INCLUDE_DIR
+          NAMES yaml_cpp.h
+          PATHS ${YAML_CPP_INCLUDE_DIRS})
+find_library(YAML_CPP_LIBRARY
+             NAMES YAML_CPP
+             PATHS ${YAML_CPP_LIBRARY_DIRS})
+if(${YAML_CPP_VERSION} VERSION_LESS 0.5)
+  add_definitions(-DDEPRECATED_YAML_CPP_VERSION)
+endif()
 
 catkin_package(
   CATKIN_DEPENDS
@@ -26,6 +28,7 @@ catkin_package(
   control_toolbox
   effort_controllers
   baxter_core_msgs
+  DEPENDS yaml-cpp
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
@@ -42,12 +45,17 @@ add_library(${PROJECT_NAME}
   src/baxter_head_controller.cpp
   src/baxter_gripper_controller.cpp
 )
+
 target_link_libraries(${PROJECT_NAME}
-  ${YAML}
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(${PROJECT_NAME}
+  ${catkin_EXPORTED_TARGETS}
+  baxter_core_msgs_gencpp
+)
 
 install(
   TARGETS ${PROJECT_NAME}
