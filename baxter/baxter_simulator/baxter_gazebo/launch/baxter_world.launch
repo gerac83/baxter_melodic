@@ -4,10 +4,9 @@
   <!-- these are the arguments you can pass this launch file, for example paused:=true -->
   <arg name="paused" default="false"/>
   <arg name="use_sim_time" default="true"/>
-  <arg name="gui" default="false"/>
+  <arg name="gui" default="true"/>
   <arg name="headless" default="false"/>
   <arg name="debug" default="false"/>
-  <arg name="gzweb" default="true"/>
 
   <!-- These arguments load the electric grippers, for example left_electric_gripper:=true -->
   <arg name="left_electric_gripper" default="true"/>
@@ -20,8 +19,7 @@
              to launching baxter_world -->
   <arg name="load_robot_description" default="true"/>
   <param if="$(arg load_robot_description)" name="robot_description"
-      command="$(find xacro)/xacro $(find baxter_description)/urdf/baxter.urdf.xacro gazebo:=true
-      left_electric_gripper:=$(arg left_electric_gripper) right_electric_gripper:=$(arg right_electric_gripper)"/>
+      command="$(find xacro)/xacro.py --inorder $(find baxter_description)/urdf/baxter.urdf.xacro gazebo:=true"/>
 
   <!-- We resume the logic in empty_world.launch, changing the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -39,10 +37,9 @@
   <!-- Publish a static transform between the world and the base of the robot -->
   <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_world" args="0 0 0 0 0 0 1 world base" />
 
-  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -z 0.93
-  <group unless="$(arg gzweb)"> 
-  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-	args="-param robot_description -urdf -model baxter
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+   <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-param robot_description -urdf -z 0.93 -model baxter
 	      -J baxter::right_s0 -0.272659
 	      -J baxter::right_s1 1.04701
 	      -J baxter::right_e0 -0.00123203
@@ -57,28 +54,12 @@
 	      -J baxter::left_w0 -0.178079
 	      -J baxter::left_w1 -0.0610333
 	      -J baxter::left_w2 -0.0124707" />
- </group>-->
-
-  <!--<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
-	args="-file $(find baxter_description)/urdf/baxter.urdf -urdf -z 1 -model baxter" />-->
-
-  <!-->  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-      args="-urdf -model baxter -file /tmp/baxter_rf.gazebo.urdf -package_to_model" respawn="false" output="screen" >
-      <param name="dummy_to_generate_gazebo_urdf_file"
-        command="rosrun xacro xacro.py -o /tmp/baxter_rf.gazebo.urdf $(find baxter_description)/urdf/baxter.urdf.xacro gazebo:=true left_electric_gripper:=$(arg left_electric_gripper) right_electric_gripper:=$(arg right_electric_gripper)" />
-      <param name="dummy_to_convert_package_to_model" command="sed -i s@package://@model:/@g /tmp/baxter_rf.gazebo.urdf" />
-    </node> -->
-
-<!-- rosrun gazebo_ros spawn_model -file `rospack find baxter_description`/urdf/baxter.urdf -urdf -model baxter 
-rosrun gazebo_ros spawn_model -file ~/gzweb/http/client/assets/baxter/model.sdf -gazebo -model baxter
-
--->
 
   <!-- ros_control baxter launch file -->
   <include file="$(find baxter_sim_hardware)/launch/baxter_sdk_control.launch">
       <arg name="right_electric_gripper" value="$(arg right_electric_gripper)"/>
       <arg name="left_electric_gripper" value="$(arg left_electric_gripper)"/>
-      <arg name="gui" value="$(arg gui)" />
   </include>
 
 </launch>
+
