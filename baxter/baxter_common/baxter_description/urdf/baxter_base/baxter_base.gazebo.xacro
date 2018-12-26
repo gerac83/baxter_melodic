@@ -4,6 +4,7 @@
   <gazebo>
     <plugin name="baxter_ros_control" filename="libbaxter_gazebo_ros_control.so">
       <robotNamespace>/robot</robotNamespace>
+      <legacyModeNS>true</legacyModeNS>
     </plugin>
   </gazebo>
   <!-- Gazebo-Specific Link Properties -->
