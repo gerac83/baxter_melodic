@@ -48,7 +48,7 @@
   <node name="baxter_sim_io" pkg="baxter_sim_io" type="baxter_sim_io" respawn="false" output="screen">
   </node>
 
-  <node name="hide_baxterio" pkg="baxter_sim_examples" type="hide_baxterio" respawn="false">
+  <node name="hide_baxterio.sh" pkg="baxter_sim_examples" type="hide_baxterio.sh" respawn="false">
   </node>
 
 </launch>
